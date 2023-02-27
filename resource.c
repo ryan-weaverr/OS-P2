@@ -164,7 +164,6 @@ void resource_reclaim( resource_t *r ){
 
 // allocate, release, and print would be public methods in an object
 
-
 int resource_allocate( resource_t *self, int tid ){
 
     int rid;
@@ -173,17 +172,16 @@ int resource_allocate( resource_t *self, int tid ){
     //   function as appropriate; follow the patterns in the textbook
 
     // ADD acquire the lock at the beginning of the method
+    pthread_mutex_lock( &self->lock );
 
 
     if( resource_check( self ) )          // signature check
         resource_error( 7 );
 
     // assertion before proceeding: self->available_count != 0
-
+    assert(self->available_count != 0);
     // ADD loop to test assertion and otherwise wait on the
     //   condition variable
-
-
 
 
     rid = 0;                              // initialize search index
@@ -198,7 +196,7 @@ int resource_allocate( resource_t *self, int tid ){
     self->available_count--;              // decr count of available resources
 
     // ADD release the lock at then end of the method
-
+    pthread_mutex_unlock(&self->lock);
 
     return rid;
 }
@@ -209,7 +207,7 @@ void resource_release( resource_t *self, int tid, int rid ){
     //   as appropriate; follow the patterns in the textbook
 
     // ADD acquire the lock at the beginnning of the method
-
+    pthread_mutex_lock( &self->lock );
 
     if( resource_check( self ) )          // signature check
         resource_error( 9 );
@@ -228,7 +226,7 @@ void resource_release( resource_t *self, int tid, int rid ){
 
 
     // ADD release the lock at the end of the method
-
+    pthread_mutex_unlock( &self->lock );
 }
 
 void resource_print( resource_t *self ){
