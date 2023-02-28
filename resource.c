@@ -172,7 +172,7 @@ int resource_allocate( resource_t *self, int tid ){
     //   function as appropriate; follow the patterns in the textbook
 
     // ADD acquire the lock at the beginning of the method
-    pthread_mutex_lock( &self->lock );
+    pthread_mutex_lock(&self->lock);
 
 
     if( resource_check( self ) )          // signature check
@@ -210,7 +210,7 @@ void resource_release( resource_t *self, int tid, int rid ){
     //   as appropriate; follow the patterns in the textbook
 
     // ADD acquire the lock at the beginnning of the method
-    pthread_mutex_lock( &self->lock );
+    pthread_mutex_lock(&self->lock);
 
     if( resource_check( self ) )          // signature check
         resource_error( 9 );
@@ -226,17 +226,17 @@ void resource_release( resource_t *self, int tid, int rid ){
     self->available_count++;              // incr count of available resources
 
     // ADD signal the condition variable
-    
+    pthread_cond_signal(&self->condition);
 
     // ADD release the lock at the end of the method
-    pthread_mutex_unlock( &self->lock );
+    pthread_mutex_unlock(&self->lock);
 }
 
-void resource_print( resource_t *self ){
+void resource_print(resource_t *self){
     int i;
 
     // obtain lock at the start of the method
-    pthread_mutex_lock( &self->lock );
+    pthread_mutex_lock(&self->lock);
 
     if( resource_check( self ) )          // signature check
         resource_error( 6 );
@@ -248,5 +248,5 @@ void resource_print( resource_t *self ){
     printf( "-------------------------------\n" );
 
     //release the lock at the end of the method
-    pthread_mutex_unlock( &self->lock );
+    pthread_mutex_unlock(&self->lock);
 }
