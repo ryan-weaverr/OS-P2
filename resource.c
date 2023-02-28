@@ -179,10 +179,13 @@ int resource_allocate( resource_t *self, int tid ){
         resource_error( 7 );
 
     // assertion before proceeding: self->available_count != 0
-    assert(self->available_count != 0);
+    //assert(self->available_count != 0);
     // ADD loop to test assertion and otherwise wait on the
     //   condition variable
-
+    while(self->available_count != 0)
+    {
+        pthread_cond_wait(&self->condition, &self->lock);
+    }
 
     rid = 0;                              // initialize search index
     self->status[self->total_count] = 0;  // extra entry is always available
@@ -223,7 +226,7 @@ void resource_release( resource_t *self, int tid, int rid ){
     self->available_count++;              // incr count of available resources
 
     // ADD signal the condition variable
-
+    
 
     // ADD release the lock at the end of the method
     pthread_mutex_unlock( &self->lock );
