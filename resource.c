@@ -175,14 +175,13 @@ int resource_allocate( resource_t *self, int tid ){
     pthread_mutex_lock(&self->lock);
 
 
-    if( resource_check( self ) )          // signature check
+    if(resource_check( self ))          // signature check
         resource_error( 7 );
 
     // assertion before proceeding: self->available_count != 0
-    //assert(self->available_count != 0);
     // ADD loop to test assertion and otherwise wait on the
     //   condition variable
-    while(self->available_count != 0)
+    while(self->available_count == 0)
     {
         pthread_cond_wait(&self->condition, &self->lock);
     }
